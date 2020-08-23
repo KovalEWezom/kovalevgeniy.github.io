@@ -9,30 +9,19 @@ const List = ({products, group}) => {
 	const {addProduct, cartItems, increase} = useContext(CartContext);
 	const {rate, priceStatus} = useContext(ProductsContext);
 
-	/**
-	 * Checking product in the cart
-	 * @param {Object} product
-	 * @returns {boolean}
-	 */
 	const isInCart = product => {
 		return !!cartItems.find(item => item.id === product.id);
 	};
 
-	/**
-	 * Checking max quantity product
-	 * @param {Object} product
-	 * @param {String|Number} quantity
-	 * @returns {boolean}
-	 */
 	const isMaxQuantity = (product, quantity) => {
 		let item = cartItems.find(item => item.id === product.id);
 		if (item) {
-			return +item.quantity < +quantity;
+			return item.quantity < quantity;
 		}
 		return false;
 	};
 
-	// Sorting by stock balance
+	// Сортировка по остаткам на складе
 	products = Object.entries(products).sort((a, b) => {
 		return ('P' in b[1]) - ('P' in a[1]);
 	});

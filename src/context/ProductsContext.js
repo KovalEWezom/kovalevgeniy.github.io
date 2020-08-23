@@ -4,7 +4,6 @@ import {timer} from "../config";
 
 export const ProductsContext = createContext({});
 
-// Random currency rate
 const randomRate = {
 	get value() {
 		return Math.floor(Math.random() * (80 - 20) + 20);
@@ -14,7 +13,7 @@ const randomRate = {
 const initialState = {
 	loading: false,
 	products: [],
-	rate: 1,
+	rate: -1,
 	priceStatus: '',
 	errorMessage: null
 };
@@ -23,8 +22,7 @@ const ProductsContextProvider = ({children}) => {
 	const [state, dispatch] = useReducer(ProductsReducer, initialState);
 	let {loading, products, rate, priceStatus, errorMessage} = state;
 
-	// Get products data (price, count)
-	function getProductsData(responseProducts = null) {
+	function getProductOptions(responseProducts = null) {
 		fetch(process.env.PUBLIC_URL + '/api/data.json')
 			.then(response => response.json())
 			.then(response => {
@@ -53,11 +51,11 @@ const ProductsContextProvider = ({children}) => {
 						type: "PRODUCTS_SUCCESS",
 						payload: {
 							products: products,
-							rate: tempRandomRate,
+							rate: randomRate.value,
 							priceStatus: (() => {
-								if (rate !== 1 && rate < tempRandomRate) {
+								if (rate !== -1 && rate < tempRandomRate) {
 									return 'less';
-								} else if (rate !== 1 && rate > tempRandomRate) {
+								} else if (rate !== -1 && rate > tempRandomRate) {
 									return 'large';
 								} else {
 									return '';
@@ -70,23 +68,21 @@ const ProductsContextProvider = ({children}) => {
 				if (response.Error) {
 					dispatch({
 						type: "PRODUCTS_FAILURE",
-						error: response.Error
+						errorMessage: response.Error
 					});
 				}
 			});
 	}
 
-	// Get products list
 	useEffect(() => {
 		fetch(process.env.PUBLIC_URL + '/api/names.json')
 			.then(response => response.json())
-			.then(response => getProductsData(response));
+			.then(response => getProductOptions(response));
 	}, []);
 
-	// Updating product data
 	useEffect(() => {
 		const intervalId = setInterval(() => {
-			getProductsData();
+			getProductOptions();
 		}, timer);
 
 		return () => clearInterval(intervalId);

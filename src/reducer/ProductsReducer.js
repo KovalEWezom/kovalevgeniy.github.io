@@ -3,7 +3,7 @@ export const ProductsReducer = (state, action) => {
 		case "PRODUCTS_SUCCESS":
 			return {
 				...state,
-				loading: true,
+				loading: false,
 				products: action.payload.products,
 				rate: action.payload.rate,
 				priceStatus: action.payload.priceStatus,

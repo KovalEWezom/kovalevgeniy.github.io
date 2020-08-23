@@ -1,21 +1,12 @@
-/**
- * Set cart items to localstorage
- * @param {Array} cartItems
- */
-const setToStorage = cartItems => {
+const Storage = (cartItems) => {
 	localStorage.setItem('cart', JSON.stringify(cartItems.length > 0 ? cartItems : []));
 };
 
-/**
- * Sum total items counts and prices
- * @param {Array} cartItems
- * @returns {{total: string, itemCount: number}}
- */
 export const sumItems = cartItems => {
-	setToStorage(cartItems);
+	Storage(cartItems);
 	let itemCount = cartItems.reduce((total, product) => total + product.quantity, 0);
 	let total = cartItems.reduce((total, product) => total + product.C * product.quantity, 0).toFixed(2);
-	return {total, itemCount};
+	return {itemCount, total}
 };
 
 export const CartReducer = (state, action) => {
@@ -61,6 +52,7 @@ export const CartReducer = (state, action) => {
 				cartItems: [...state.cartItems]
 			};
 		default:
-			return state;
+			return state
+
 	}
 };
